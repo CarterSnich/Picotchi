@@ -13,6 +13,7 @@
   - Uses Up/Down butttons for navigation and A,B for Menu/Select, Back
   - The menu doesn't loop when navigating.
   - Removed the ability to pause while in game.
+  - I placed the graphics on a separated header file.
 */
 
 #include <SPI.h>
@@ -21,17 +22,16 @@
 #include <Adafruit_SSD1306.h>
 #include "Graphics.h"
 
-#define SCREEN_WIDTH 128  // OLED display width, in pixels
-#define SCREEN_HEIGHT 64  // OLED display height, in pixels
-
-#define OLED_RESET -1        // Reset pin # (or -1 if sharing Arduino reset pin)
+#define SCREEN_WIDTH 128     // OLED display width, in pixels
+#define SCREEN_HEIGHT 64     // OLED display height, in pixels
 #define SCREEN_ADDRESS 0x3C  ///< See datasheet for Address; 0x3D for 128x64, 0x3C for 128x32
+#define OLED_RESET -1        // Reset pin # (or -1 if sharing Arduino reset pin)
 Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RESET);
 
-#define KEYPAD_A 28      // menu, select
-#define KEYPAD_B 27      // back
-#define KEYPAD_UP 29     // as itself
-#define KEYPAD_DOWN 15   // as itself
+#define KEYPAD_A 28     // menu, select
+#define KEYPAD_B 27     // back
+#define KEYPAD_UP 29    // as itself
+#define KEYPAD_DOWN 15  // as itself
 
 #define SPEAKER_PIN 10  // speaker
 
@@ -41,10 +41,7 @@ int KeypadUpState = HIGH;
 int KeypadDownState = HIGH;
 
 #define WALKSIZE 6
-//const unsigned char* const dinoWalk[WALKSIZE] PROGMEM = {
 const unsigned char* dinoWalk[WALKSIZE] = {
-  //dinoWalk0,dinoWalk0,dinoWalk1,dinoWalk1,dinoWalk2,dinoWalk2,
-  //dinoWalk3,dinoWalk3,dinoWalk4,dinoWalk4,dinoWalk5,dinoWalk5
   dinoWalk0, dinoWalk1, dinoWalk2,
   dinoWalk3, dinoWalk4, dinoWalk5
 };
@@ -54,12 +51,9 @@ bool walkAnimReverse = false;
 bool walkRight = false;
 int walkDirOffset = 2;
 
-
-
 const unsigned char* eating[4] = {
   eating1, eating2, eating3, eating2
 };
-
 
 //ground
 int grassXPos = 0;
@@ -73,12 +67,7 @@ float sunXPos = -2 * sunRadius;
 //clouds
 const int cloud1Width = 32;
 float cloud1XPos = display.width() + cloud1Width;
-
-
 int stars[6][2];
-
-
-
 
 // menus
 bool menuOpened = false;
@@ -97,13 +86,10 @@ const char mainMenu[MENUSIZE][8][STRING_SIZE] PROGMEM = {
   { "doctor", NULL },
   { "discipline", NULL },
   { "stats", "hunger", "happiness", "health", "discipline", "weight", "age", NULL },
-  { "settings", "sound",
-    //"something",
-    NULL },
+  { "settings", "sound", NULL },
 };
 
 /* ------- PET STATS ------- */
-
 float hunger = 100;
 float happiness = 100;
 float health = 100;
@@ -120,7 +106,6 @@ int setting = 0;
 bool notification = false;
 int notificationBlink = 0;
 bool dead = false;
-
 bool sleeping = false;
 
 //game
@@ -141,11 +126,7 @@ int obstacle2XPos = 0;
 
 
 float poopometer = 0;
-int poops[3] = {
-  0,
-  0,
-  0,
-};
+int poops[3] = { 0, 0, 0 };
 
 void setup() {
   pinMode(KEYPAD_A, INPUT_PULLUP);
@@ -154,8 +135,6 @@ void setup() {
   pinMode(KEYPAD_DOWN, INPUT_PULLUP);
   pinMode(SPEAKER_PIN, OUTPUT);
 
-  pinMode(25, OUTPUT);
-
   randomSeed(analogRead(0));
 
   display.begin(SSD1306_SWITCHCAPVCC, SCREEN_ADDRESS);
@@ -163,14 +142,12 @@ void setup() {
 
   // splash
   display.setTextColor(WHITE);
-  //display.println(F("jakobdesign presents"));
   display.print(F(" jakobdesign presents"));
   display.drawBitmap(15, 24, splash1, 48, 26, WHITE);
   display.drawBitmap(48, 24, splash2, 80, 40, WHITE);
   display.display();
 
   //splash tone
-
   tone(SPEAKER_PIN, 500, 200);
   delay(200);
   tone(SPEAKER_PIN, 1000, 200);
@@ -182,11 +159,8 @@ void setup() {
   delay(2200);
   // end splash
 
-
   display.clearDisplay();
 }
-
-
 
 void loop() {
   delay(40);
@@ -194,7 +168,6 @@ void loop() {
   KeypadBState = digitalRead(KEYPAD_B);
   KeypadUpState = digitalRead(KEYPAD_UP);
   KeypadDownState = digitalRead(KEYPAD_DOWN);
-  //char* str = "";
 
   if (!dead) {
     /* -------- MODIFY PET STATS -------- */
@@ -275,10 +248,9 @@ void loop() {
 
     /* ------- BUTTON PRESS ACTIONS ------- */
 
-    /* ------- KEYPAD A - MENU ------- */
+    /* ------- KEYPAD A - MENU/SELECT ------- */
     if (KeypadAstate == LOW) {
       delay(40);
-
 
       // JUMP IN GAME
       if (game) {
@@ -289,11 +261,8 @@ void loop() {
           }
           jumping = true;
         }
-      }
-
-      // MENU SELECT
-      else if (menuOpened) {
-
+      } else if (menuOpened) {
+        // MENU SELECT
         if (subMenu != 1 && (const char*)pgm_read_word(&(mainMenu[menu][1][0])) != NULL) {
           action = 100 * (menu + 1) + subMenu;
         }
@@ -307,11 +276,9 @@ void loop() {
           setting = 100 * (menu + 1) + subMenu;
           menuDepth = true;
         }
-
         delay(60);
       } else {
         // MENU
-
         if (soundEnabled) {
           tone(SPEAKER_PIN, 300, 80);
           noTone(SPEAKER_PIN);
@@ -320,7 +287,6 @@ void loop() {
         if (!menuOpened) {
           menuOpened = true;
         }
-
         delay(60);
       }
     }
@@ -365,7 +331,6 @@ void loop() {
         subMenu = 1;
       }
 
-
       delay(60);
     }
 
@@ -383,7 +348,6 @@ void loop() {
 
         if ((const char*)pgm_read_word(&(mainMenu[menu][1])) != NULL) {
           subMenu = 1;
-
           justOpened = true;
         }
         setting = 100 * (menu + 1) + subMenu;
@@ -414,7 +378,6 @@ void loop() {
 
       delay(60);
     }
-
 
 
     /* ------- SCENERY AND WALKING ------- */
@@ -462,10 +425,7 @@ void loop() {
     display.drawBitmap(0, 7, mountains, 128, 16, WHITE);
 
     //walk and move ground perspective
-
     if (game) {
-
-
       /* ------ GAME -----*/
       level = round(score / 10);
 
@@ -506,14 +466,11 @@ void loop() {
           }
         }
 
-
-
         walkXPos += 2;
         grassXPos += 4;
         treesXPos = treesXPos + 1 + level;
         obstacle1XPos = obstacle1XPos + 2 + level;
         obstacle2XPos = obstacle2XPos + 2 + level;
-
 
         if (!jumping && ((obstacle1show && display.width() - obstacle1XPos >= 20 && display.width() - obstacle1XPos <= 46) || (obstacle2show && display.width() - obstacle2XPos >= 20 && display.width() - obstacle2XPos <= 46))) {
           gameOver = true;
@@ -684,8 +641,6 @@ void loop() {
       //draw trees
       display.drawBitmap(-treesXPos, 23, trees, 112, 20, WHITE);
 
-
-
       if (!sleeping) {
         if (walkAnimReverse) {
           --walkPos;
@@ -788,8 +743,6 @@ void loop() {
             display.display();
           }
         }
-
-
 
         switch (action) {
           //apple
@@ -1036,14 +989,6 @@ void loop() {
     }
   }
 }
-
-
-
-
-
-
-
-
 
 void drawBar(float value) {
   display.fillRect(72, 19, 48 * value / 100, 3, WHITE);
