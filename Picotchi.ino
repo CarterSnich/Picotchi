@@ -1,20 +1,3 @@
-/*
-  TamagoPico by CarterSnich
-  forked from niubit, but the original 
-  the orignal code was from alojzjakob
-  https://github.com/niubit/piconsole/tree/master/soft/Tamaguino (this is what I cloned)
-  https://github.com/alojzjakob/Tamaguino (original/updated code)
-
-  I already have a DIY console but I have no games for it yet.
-  I wanna test it, and I found Jakob's game.
-
-  The following are the modifications I made:
-  - Use I2C instead of SPI
-  - Uses Up/Down butttons for navigation and A,B for Menu/Select, Back
-  - The menu doesn't loop when navigating.
-  - Removed the ability to pause while in game.
-  - I placed the graphics on a separated header file.
-*/
 
 #include <SPI.h>
 #include <Wire.h>
