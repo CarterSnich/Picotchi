@@ -11,12 +11,12 @@
 #define OLED_RESET -1        // Reset pin # (or -1 if sharing Arduino reset pin)
 Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RESET);
 
+// Pins
 #define KEYPAD_A 28     // menu, select
 #define KEYPAD_B 27     // back
 #define KEYPAD_UP 29    // as itself
 #define KEYPAD_DOWN 15  // as itself
-
-#define SPEAKER_PIN 10  // speaker
+#define SPEAKER_PIN 9  // speaker
 
 int KeypadAstate = HIGH;
 int KeypadBState = HIGH;

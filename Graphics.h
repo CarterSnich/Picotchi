@@ -1,4 +1,3 @@
-
 // splash 48x26
 const unsigned char splash1[] PROGMEM = {
   0x00,
@@ -156,7 +155,7 @@ const unsigned char splash1[] PROGMEM = {
   0x00,
   0x00,
   0x00,
-  0x00,
+  0x00
 };
 //splash dino 80x40
 const unsigned char splash2[] PROGMEM = {
