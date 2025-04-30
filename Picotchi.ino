@@ -16,7 +16,7 @@ Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RESET);
 #define KEYPAD_B 27     // back
 #define KEYPAD_UP 29    // as itself
 #define KEYPAD_DOWN 15  // as itself
-#define SPEAKER_PIN 9  // speaker
+#define SPEAKER_PIN 9   // speaker
 
 int KeypadAstate = HIGH;
 int KeypadBState = HIGH;
@@ -337,6 +337,17 @@ void loop() {
       }
 
       delay(60);
+    } else if (KeypadUpState == LOW) {
+      action = NULL;
+
+      menuOpened = true;
+      menuDepth = true;
+      subMenu = 1;
+      menu = 6;
+      action = 701;
+      setting = 701;
+
+      delay(60);
     }
 
     /* KEYPAD DOWN  */
@@ -358,6 +369,17 @@ void loop() {
         }
         setting = 100 * (menu + 1) + subMenu;
       }
+
+      delay(60);
+    } else if (KeypadDownState == LOW) {
+      action = NULL;
+
+      menuOpened = true;
+      menuDepth = true;
+      subMenu = 1;
+      menu = 6;
+      action = 701;
+      setting = 701;
 
       delay(60);
     }
